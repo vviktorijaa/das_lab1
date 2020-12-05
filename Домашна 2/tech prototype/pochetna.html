@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="css.css">
+    <script type="text/javascript" src="JavaScript.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <title>Home</title>
+    <script>
+        var coordinates=["41,9979155 21,4122694", "41,9997295 21,4078483", "41,9985008 21,415982"]; //primer koordinati
+        function Vnes(){
+            kopche=document.getElementById("vnes");
+            pole=document.getElementById("pole").value;
+            if(pole.length==0){
+                var $el = $("#vnes"),
+                    x = 1000,
+                    originalColor = $el.css("background");
+
+                $el.css("background", "#FF3838");
+                setTimeout(function(){
+                    $el.css("background", originalColor);
+                }, x);
+            }
+            else{
+                container = document.getElementById("coordinatesContainer");
+
+                var el1=document.createElement("p");
+                el1.innerHTML="Kalabalak - 427,68 meters away"+"<img src=\"slikiApp/pin.png\" width=\"20px\" height=\"25px\">"+"<img src=\"slikiApp/favourites.png\" width=\"20px\" height=\"25px\">";
+
+                container.style.display="block";
+                container.appendChild(el1);
+            }
+        }
+
+        function Click(){
+            document.getElementById('containerClose').onclick = function() {
+                document.getElementById("coordinatesContainer").style.display = "none";
+            }
+        }
+
+        function visitedPlaces(){
+            var x = document.getElementById("pinContainer");
+            if (x.style.display === "none") {
+                x.style.display = "block";
+
+                var el=document.createElement("p");
+                el.setAttribute("id", "el");
+                el.innerHTML="&nbsp;&nbsp;Visited Place1"+"<br>"+"&nbsp;&nbsp;Visited Place2";
+                x.appendChild(el);
+
+            } else {
+                x.style.display = "none";
+                var element = document.getElementById("el");
+                element.parentNode.removeChild(element);
+            }
+        }
+
+        function favouritePlaces(){
+            var el=document.createElement("p");
+            var x = document.getElementById("favouritesContainer");
+            if (x.style.display === "none") {
+                x.style.display = "block";
+
+                el.innerHTML="&nbsp;&nbsp;Favourite Place1"+"<br>"+"&nbsp;&nbsp;Favourite Place2";
+                el.setAttribute("id", "el");
+                x.appendChild(el);
+
+            } else {
+                x.style.display = "none";
+                var element = document.getElementById("el");
+                element.parentNode.removeChild(element);
+            }
+        }
+
+        function recommendedPlaces(){
+            var el=document.createElement("p");
+            var x = document.getElementById("recommendedContainer");
+            if (x.style.display === "none") {
+                x.style.display = "block";
+
+                el.innerHTML="<b>"+"&nbsp;&nbsp;Rock kafana Rustikana"+"</b><br><b>"+"&nbsp;&nbsp;Opening hours:"+"</b><br>"+"&nbsp;&nbsp;Mon-Thu 09:00-00:00"+"<br><b>"+"&nbsp;&nbsp;Rating: 4,4"+"</b><img src=\"slikiApp/favourites.png\" width=\"20px\" height=\"20px\">";
+                el.setAttribute("id", "el");
+                x.appendChild(el);
+
+            } else {
+                x.style.display = "none";
+                var element = document.getElementById("el");
+                element.parentNode.removeChild(element);
+            }
+        }
+
+    </script>
+</head>
+<body>
+
+<div>
+    <img id="logo" src="slikiApp/logo.png">
+</div>
+
+<div id="container">
+
+    <div class="dropdown">
+        <button class="dropbtn">Menu</button>
+        <div class="dropdown-content">
+            <a id="about" href="about.html">About NavApp</a>
+            <a id="help" href="help.html">Help</a>
+        </div>
+    </div>
+
+    <input type="text" id="pole" placeholder="    Input coordinates...">
+    <button type="button" id="vnes" onclick="Vnes()">Search</button>
+    <div id="coordinatesContainer">
+        <img class="close" onclick="Click()" id="containerClose" src="slikiApp/close.png" style="float: right; height: 20px; cursor: pointer">
+    </div>
+</div>
+
+<div>
+<div id="container1" class="container">
+    <img id="pin" src="slikiApp/pin.png"><p id="visitedPlaces" onclick="visitedPlaces()">Visited Places</p>
+</div>
+
+<div id="pinContainer">
+</div>
+</div>
+
+<div>
+<div id="container2" class="container">
+    <img id="faves" src="slikiApp/favourites.png"><p id="favouritePlaces" onclick="favouritePlaces()">Favourite Places</p>
+</div>
+
+<div id="favouritesContainer">
+</div>
+</div>
+
+<div>
+<div id="container3" class="container">
+    <img id="recommended" src="slikiApp/correct.png"><p id="recommendedPlaces" onclick="recommendedPlaces()">Recommended in this area</p>
+</div>
+
+<div id="recommendedContainer">
+    <img id="next" src="slikiApp/strelka.png" style="cursor:pointer; height:30px; width:30px; position:absolute; bottom:0; margin-left:327px">
+</div>
+</div>
+
+<div id="map">
+    <img style="height:100%; width:100%; border-radius:10px; cursor: pointer" src="slikiApp/mapa.PNG">
+</div>
+
+</body>
+</html>
