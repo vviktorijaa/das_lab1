@@ -32,8 +32,7 @@ public class MyServletDemo extends HttpServlet {
 			if (line.contains("lon")) {
 				currLon = Double.parseDouble(line.substring(4));
 			} else if (currLat != 0 && currLon != 0) {
-				double distance = measure(lat, lon, currLat, currLon); // double
-
+				double distance = measure(lat, lon, currLat, currLon);
 				lista.insertLast(distance);
 
 				currLat = 0;
@@ -95,7 +94,7 @@ public class MyServletDemo extends HttpServlet {
 		}
 
 		try {
-			FileWriter myWriter = new FileWriter("rastojanija.txt"); //ovde pateka do desktop
+			FileWriter myWriter = new FileWriter("rastojanija.txt");
 
 			DecimalFormat df = new DecimalFormat("#.##");
 			String formatted1 = df.format(min1);
@@ -127,7 +126,7 @@ class CreateHtml {
 		File f = new File("C:/Users/Viki/eclipse-workspace/Application/WebContent/distance.html");
 		BufferedWriter bw = new BufferedWriter(new FileWriter(f));
 
-		File file = new File("rastojanija.txt"); //ovde patekata do desktop
+		File file = new File("rastojanija.txt");
 		BufferedReader br = new BufferedReader(new FileReader(file));
 		String line = br.readLine();
 
