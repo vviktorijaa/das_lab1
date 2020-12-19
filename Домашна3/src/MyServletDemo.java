@@ -95,21 +95,24 @@ public class MyServletDemo extends HttpServlet {
 		}
 
 		try {
-			FileWriter myWriter = new FileWriter("C:\\Users\\Viki\\Desktop\\rastojanija.txt");
+			FileWriter myWriter = new FileWriter("rastojanija.txt"); //ovde pateka do desktop
 
 			DecimalFormat df = new DecimalFormat("#.##");
 			String formatted1 = df.format(min1);
 			myWriter.write(formatted1 + " meters away");
+			System.out.println("MIN1: "+formatted1);
 
 			myWriter.write("\n");
 
 			String formatted2 = df.format(min2);
 			myWriter.write(formatted2 + " meters away");
+			System.out.println("MIN2: "+formatted2);
 
 			myWriter.write("\n");
 
 			String formatted3 = df.format(min3);
 			myWriter.write(formatted3 + " meters away");
+			System.out.println("MIN3: "+formatted3);
 			myWriter.close();
 
 		} catch (IOException e) {
@@ -124,7 +127,7 @@ class CreateHtml {
 		File f = new File("C:/Users/Viki/eclipse-workspace/Application/WebContent/distance.html");
 		BufferedWriter bw = new BufferedWriter(new FileWriter(f));
 
-		File file = new File("C:\\Users\\Viki\\Desktop\\rastojanija.txt");
+		File file = new File("rastojanija.txt"); //ovde patekata do desktop
 		BufferedReader br = new BufferedReader(new FileReader(file));
 		String line = br.readLine();
 
@@ -135,7 +138,7 @@ class CreateHtml {
 				+ "margin:auto; height:65%; margin-top:10px\" id=\"distanceContainer\">\r\n");
 
 		while (line != null) {
-			bw.write("<p style=\"font-size:3vw; margin-left:10px\">" + line + "</p>");
+			bw.write("<p style=\"font-size:3vw; margin-left:10px\">" + line + "</p><div style=\"margin-top: -95px; width:100%; margin-left:475px\"><img onclick=\"addToVisited()\" style=\"height:16%; width:5%; cursor:pointer\" src=\"slikiApp/pin_shadow.png\"><img onclick=\"addToFaves()\" style=\"height:16%; width:7%; cursor:pointer\" src=\"slikiApp/favourites.png\"></div>");
 			bw.write("<br>");
 			line = br.readLine();
 		}
