@@ -99,19 +99,17 @@ public class MyServletDemo extends HttpServlet {
 			DecimalFormat df = new DecimalFormat("#.##");
 			String formatted1 = df.format(min1);
 			myWriter.write(formatted1 + " meters away");
-			System.out.println("MIN1: "+formatted1);
 
 			myWriter.write("\n");
 
 			String formatted2 = df.format(min2);
 			myWriter.write(formatted2 + " meters away");
-			System.out.println("MIN2: "+formatted2);
 
 			myWriter.write("\n");
 
 			String formatted3 = df.format(min3);
 			myWriter.write(formatted3 + " meters away");
-			System.out.println("MIN3: "+formatted3);
+
 			myWriter.close();
 
 		} catch (IOException e) {
