@@ -12,7 +12,7 @@ import java.text.DecimalFormat;
 public class MyServletDemo extends HttpServlet {
 
 	public void mainFunc(String v) throws IOException {
-		File file = new File("C:\\Users\\Viki\\Desktop\\database.txt");
+		File file = new File("database.txt");
 		BufferedReader br = new BufferedReader(new FileReader(file));
 		DecimalFormat df = new DecimalFormat("#.##");
 		SLL<Double> lista = new SLL();
@@ -121,7 +121,7 @@ public class MyServletDemo extends HttpServlet {
 
 class CreateHtml {
 	public void createHtml() throws IOException {
-		File f = new File("C:/Users/Viki/eclipse-workspace/Application/WebContent/distance.html");
+		File f = new File("distance.html");
 		BufferedWriter bw = new BufferedWriter(new FileWriter(f));
 
 		File file = new File("rastojanija.txt");
