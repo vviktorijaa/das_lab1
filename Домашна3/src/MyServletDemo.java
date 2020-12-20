@@ -12,7 +12,7 @@ import java.text.DecimalFormat;
 public class MyServletDemo extends HttpServlet {
 
 	public void mainFunc(String v) throws IOException {
-		File file = new File("C:\\Users\\Viki\\Desktop\\database.txt");
+		File file = new File("database.txt");
 		BufferedReader br = new BufferedReader(new FileReader(file));
 		DecimalFormat df = new DecimalFormat("#.##");
 		SLL<Double> lista = new SLL();
@@ -99,19 +99,17 @@ public class MyServletDemo extends HttpServlet {
 			DecimalFormat df = new DecimalFormat("#.##");
 			String formatted1 = df.format(min1);
 			myWriter.write(formatted1 + " meters away");
-			System.out.println("MIN1: "+formatted1);
 
 			myWriter.write("\n");
 
 			String formatted2 = df.format(min2);
 			myWriter.write(formatted2 + " meters away");
-			System.out.println("MIN2: "+formatted2);
 
 			myWriter.write("\n");
 
 			String formatted3 = df.format(min3);
 			myWriter.write(formatted3 + " meters away");
-			System.out.println("MIN3: "+formatted3);
+
 			myWriter.close();
 
 		} catch (IOException e) {
@@ -123,7 +121,7 @@ public class MyServletDemo extends HttpServlet {
 
 class CreateHtml {
 	public void createHtml() throws IOException {
-		File f = new File("C:/Users/Viki/eclipse-workspace/Application/WebContent/distance.html");
+		File f = new File("distance.html");
 		BufferedWriter bw = new BufferedWriter(new FileWriter(f));
 
 		File file = new File("rastojanija.txt");
