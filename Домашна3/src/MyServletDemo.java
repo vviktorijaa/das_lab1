@@ -121,7 +121,7 @@ public class MyServletDemo extends HttpServlet {
 
 class CreateHtml {
 	public void createHtml() throws IOException {
-		File f = new File("distance.html")
+		File f = new File("distance.html");
 		BufferedWriter bw = new BufferedWriter(new FileWriter(f));
 
 		File file = new File("rastojanija.txt");
