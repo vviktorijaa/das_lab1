@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="css.css">
+    <script type="text/javascript" src="JavaScript.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <title>Home</title>
+    <style>
+        body{
+            font-family: 'Trebuchet MS', sans-serif;
+        }
+
+        body, html {
+            width:100%;
+        }
+
+        #map, #mapa{
+            height: 100%;
+
+            width: 80%;
+        }
+        #mapa {
+            border: 0;
+            position: absolute;
+            top: 0;
+            margin-left: 240px;
+        }
+
+        .sidenav {
+            height: 100%;
+            width: 0;
+            position: fixed;
+            z-index: 1;
+            top: 0;
+            left: 0;
+            background-color: #111;
+            overflow-x: hidden;
+            transition: 0.5s;
+            padding-top: 60px;
+        }
+
+        .sidenav a {
+            padding: 8px 0px 8px 22px;
+            text-decoration: none;
+            font-size: 25px;
+            color: #818181;
+            display: block;
+            transition: 0.3s;
+        }
+
+        .sidenav a:hover {
+            color: #f1f1f1;
+        }
+
+        .sidenav .closebtn {
+            position: absolute;
+            top: 0;
+            right: 25px;
+            font-size: 36px;
+            margin-left: 50px;
+        }
+
+        #pole{
+            box-shadow: 0px 10px 14px -7px #3c4547;
+            margin-top: 10px;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+            height: 30px;
+            width: 160px;
+        }
+
+        #vnes{
+            box-shadow: 0px 10px 14px -7px #3c4547;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+            height: 35px;
+            width: 60px;
+            cursor: pointer;
+            position: absolute;
+            top: 0;
+            margin-left: 2px;
+            margin-top: 58px;
+        }
+
+        #pin{
+            height: 10%;
+            width: 3%;
+            position: absolute;
+            margin-top: 30px;
+        }
+
+        #visitedPlaces {
+            margin-top: 135px;
+        }
+
+        #visited{
+            position: absolute;
+            box-shadow: 0px 10px 14px -7px #3c4547;
+            margin-top: 90px;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+            height: 30px;
+            width: 160px;
+        }
+
+        #addVisited{
+            margin-left: 168px;
+            box-shadow: 0px 10px 14px -7px #3c4547;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+            height: 35px;
+            width: 60px;
+            cursor: pointer;
+            position: absolute;
+            top: 0;
+            margin-top: 182px;
+        }
+
+        #faves{
+            height: 10%;
+            width: 4%;
+            position: absolute;
+            margin-top: 145px;
+        }
+
+        #favouritePlaces, #visitedPlaces, #recommendedPlaces{
+            font-family: 'Trebuchet MS', sans-serif;
+            text-shadow: 2px 2px #D5D5D5;
+            position: absolute;
+            margin-left: 45px;
+            font-size: 2vw;
+            top: 0;
+        }
+
+        #favouritePlaces{
+            margin-top: 250px;
+        }
+
+        #addFave{
+            margin-left:168px;
+            box-shadow: 0px 10px 14px -7px #3c4547;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+            height: 35px;
+            width: 60px;
+            cursor: pointer;
+            position: absolute;
+            margin-top: 205px;
+        }
+
+        #fave{
+            position: absolute;
+            box-shadow: 0px 10px 14px -7px #3c4547;
+            margin-top: 206px;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+            height: 30px;
+            width: 160px;
+        }
+
+        #recommended{
+            height: 10%;
+            width: 5%;
+            position: absolute;
+            margin-top: 280px;
+        }
+
+        #recommendedPlaces{
+            margin-top: 372px;
+            margin-left: 65px;
+        }
+
+        #recommendedContainer{
+            padding: 5px;
+            margin-top: 345px;
+            font-family: 'Trebuchet MS', sans-serif;
+            text-shadow: 2px 2px #D5D5D5;
+            width: 210px;
+            position: absolute;
+            display: none;
+        }
+
+        #openNav{
+            font-size:30px;
+            cursor:pointer;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            padding-top: 100px;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0,0,0);
+            background-color: rgba(0,0,0,0.4);
+        }
+
+        .modal-content {
+            font-size: 2.5vw;
+            padding: 10px;
+            text-shadow: 2px 2px #D5D5D5;
+            text-align: center;
+            background-color: #fefefe;
+            margin: auto;
+            border: 1px solid #888;
+            width: 80%;
+            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+            -webkit-animation-name: animatetop;
+            -webkit-animation-duration: 0.4s;
+            animation-name: animatetop;
+            animation-duration: 0.4s
+        }
+
+        @-webkit-keyframes animatetop {
+            from {top:-300px; opacity:0}
+            to {top:0; opacity:1}
+        }
+
+        @keyframes animatetop {
+            from {top:-300px; opacity:0}
+            to {top:0; opacity:1}
+        }
+
+        .close {
+            margin-top: -10px;
+            color: #aaaaaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+    <script>
+        function openNav() {
+            document.getElementById("mySidenav").style.width = "250px";
+        }
+
+        function closeNav() {
+            document.getElementById("mySidenav").style.width = "0";
+        }
+
+        $(function () {
+            count = 0;
+            wordsArray = ["Rock kafana Rustikana  Rating: 4,6 ★★★★☆", "Kafana Skadarlija  Rating: 4,4 ★★★★☆", "Kafana Debar Maalo  Rating: 4,2 ★★★★☆", "Gradska kafeana Kalabalak  Rating: 4,1 ★★★★☆"];
+            setInterval(function () {
+                count++;
+                $("#recommendedContainer").fadeOut(400, function () {
+                    $(this).text(wordsArray[count % wordsArray.length]).fadeIn(400);
+                });
+            }, 4000);
+        });
+
+        $(document).ready(function(){
+            $('#addVisited, #addFave').click(function(){
+                if(this.id == 'addVisited'){
+                    var vnesen = document.getElementById("visited").value;
+                    document.getElementById("visited").value = "";
+                }
+                else if(this.id == 'addFave'){
+                    var vnesen = document.getElementById("fave").value;
+                    document.getElementById("fave").value = "";
+                }
+            });
+        });
+
+        function Vnes(){
+            pole=document.getElementById("pole").value;
+            if(pole.length==0) {
+                var $el = $("#vnes"),
+                    x = 200,
+                    originalColor = $el.css("background");
+                $el.css("background", "#C93434");
+                setTimeout(function () {
+                    $el.css("background", originalColor);
+                }, x);
+            }
+        }
+    </script>
+</head>
+<body>
+
+<span id="openNav" onclick="openNav()">&#9776;</span>
+<div id="mySidenav" class="sidenav">
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+    <a href="about.html">About Us</a>
+    <a href="help.html">How to use NavApp</a>
+</div>
+
+<div>
+    <form method="get" action="welcome" id="myForm">
+        <input type="text" id="pole" name="pole1" placeholder="    Input coordinates...">
+        <button type="submit" id="vnes" onclick="Vnes()">Search</button>
+    </form>
+</div>
+
+<div>
+    <div id="container1">
+        <img id="pin" src="slikiApp/pin_shadow.png"><p id="visitedPlaces" onclick="visitedPlaces()">Visited Places</p>
+    </div>
+
+    <div id="pinContainer">
+        <input type="text" id="visited" placeholder="  Add your visited place..."><button id="addVisited">Add</button>
+    </div>
+</div>
+
+<div>
+    <div id="container2">
+        <img id="faves" src="slikiApp/favourites.png"><p id="favouritePlaces" onclick="favouritePlaces()">Favourite Places</p>
+    </div>
+
+    <div name="fc" id="favouritesContainer">
+        <input name="fc1" type="text" id="fave" placeholder="  Add your favourite place..."><button id="addFave">Add</button>
+    </div>
+
+</div>
+
+<div>
+    <div id="container3">
+        <img id="recommended" src="slikiApp/correct.png"><p id="recommendedPlaces">Recommended<br>in this area</p>
+    </div>
+
+    <div id="recommendedContainer">
+    </div>
+</div>
+
+<div id="map">
+    <iframe id="mapa" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d5929.678397626117!2d21.40897392439013!3d42.00372643948051!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1354144526e88731%3A0x2a067e61c6a0af3e!2sKarposh%201%2C%20Skopje%201000!5e0!3m2!1sen!2smk!4v1607546074702!5m2!1sen!2smk" width="500" height="400" frameborder="0" style="border:0;" allowfullscreen="" aria-hidden="false" tabindex="0"></iframe>
+</div>
+
+<div id="myModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <p>Place added successfully!</p>
+    </div>
+</div>
+
+<script>
+    var modal=document.getElementById("myModal");
+    var btnFave=document.getElementById("addFave");
+    var btnPin=document.getElementById("addVisited");
+    var span=document.getElementsByClassName("close")[0];
+
+    btnFave.onclick = function() {
+        modal.style.display = "block";
+        setTimeout(function(){
+            modal.style.display="none";
+        }, 3000);
+    }
+
+    btnPin.onclick = function() {
+        modal.style.display = "block";
+        setTimeout(function(){
+            modal.style.display="none";
+        }, 3000);
+    }
+
+    span.onclick = function() {
+        modal.style.display = "none";
+    }
+
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+</script>
+
+</body>
+</html>
