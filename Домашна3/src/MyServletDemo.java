@@ -6,15 +6,47 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.text.DecimalFormat;
+
+/*
+ * Креирање html фајл кој се прикажува при повик на Servlet - кликање на копче
+ * Search ги прикажува растојанијата до најблиските ресторани
+ */
+class CreateHtml {
+	public void createHtml() throws IOException {
+		File f = new File("distance.html");
+
+		BufferedWriter bw = new BufferedWriter(new FileWriter(f));
+
+		File file = new File("rastojanija.txt");
+		BufferedReader br = new BufferedReader(new FileReader(file));
+		String line = br.readLine();
+
+		bw.write("<html><body style=\"height: 97%;"
+				+ "background-image: url(slikiApp/pozadina_mapa_burred.jpg); background-size: cover; background-repeat: no-repeat;"
+				+ "font-family: 'Trebuchet MS', sans-serif\">"
+				+ "<a href=\"home.html\"><img src=\"slikiApp/levo_strelka.png\" style=\"float:left; height:15%; width:10%; cursor:pointer\"></a><img style=\"display:block; margin-left:auto; margin-right:auto; width: 30%\" id=\"logoDistance\" src=\"slikiApp/logo_shadow.png\"><div id=\"distanceContainer\""
+				+ "style=\"margin:auto; margin:auto; height:65%; width:50%; padding:10px\" id=\"distanceContainer\">\r\n");
+		 
+		while (line != null) {
+			//System.out.println("LINE" + line);
+			bw.write("<p style=\"font-size:3vw; margin-left:10px\">" + line
+					+ "</p><div style=\"margin-top: -95px; margin-left:475px\"><img onclick=\"addToVisited()\" style=\"height:16%; width:26%; cursor:pointer\" src=\"slikiApp/pin_shadow.png\"><img onclick=\"addToFaves()\" style=\"height:16%; width:37%; cursor:pointer\" src=\"slikiApp/favourites.png\"></div>");
+			bw.write("<br>");
+			line = br.readLine();
+		}
+		br.close();
+		bw.write("</div></body></html>");
+
+		bw.close();
+	}
+}
 
 public class MyServletDemo extends HttpServlet {
 
 	public void mainFunc(String v) throws IOException {
 		File file = new File("database.txt");
 		BufferedReader br = new BufferedReader(new FileReader(file));
-		DecimalFormat df = new DecimalFormat("#.##");
 		SLL<Double> lista = new SLL();
 
 		String[] pomNiza = v.split(" ");
@@ -47,23 +79,40 @@ public class MyServletDemo extends HttpServlet {
 
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
-
-		PrintWriter out = response.getWriter();
-
+		
 		String value = (String) request.getParameter("pole1");
+		String [] razdeli=value.split("\\W+");
+		for(int i=0; i<value.length(); i++) {
+			if(Character.isLetter((value.charAt(i)))) {
+				String nextHTML = "/home.html?t=\" + System.currentTimeMillis()"; //home
+				RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(nextHTML);
+				dispatcher.forward(request, response);
+			}
+		}
+		if (value.isEmpty() || razdeli.length==1) {
+			String nextHTML = "/home.html?t=\" + System.currentTimeMillis()"; //home
+			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(nextHTML);
+			dispatcher.forward(request, response);
+		}
+		else {
+			mainFunc(value);
 
-		mainFunc(value);
+			CreateHtml html = new CreateHtml();
+			html.createHtml();
 
-		CreateHtml html = new CreateHtml();
-		html.createHtml();
-
-		String nextHTML = "/distance.html";
-		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(nextHTML);
-		dispatcher.forward(request, response);
+			String nextHTML = "/distance.html?t=\" + System.currentTimeMillis()";
+			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(nextHTML);
+			dispatcher.forward(request, response);
+		}
+		// response.sendRedirect("http://.google.com");F
 	}
 
+	/*
+	 * Пресметува растојание помеѓу координатите внесени од корисникот и
+	 * координатите на сите ресторани од базата
+	 */
 	public static double measure(double lat1, double lon1, double lat2, double lon2) {
-		int R = 6371; // Radius of earth in KM
+		int R = 6371; // Радиус на планетата Земја во километри
 		double dLat = lat2 * Math.PI / 180 - lat1 * Math.PI / 180;
 		double dLon = lon2 * Math.PI / 180 - lon1 * Math.PI / 180;
 		double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(lat1 * Math.PI / 180)
@@ -71,9 +120,13 @@ public class MyServletDemo extends HttpServlet {
 		double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 		double d = R * c;
 
-		return d * 1000; // metri
+		return d * 1000; // метри
 	}
 
+	/*
+	 * Ги враќа трите најкратки растојанија од внесените координати до 3те најблиски
+	 * ресторани и растојанијата (во метри) ги запишува во txt фајл
+	 */
 	public void vratiNajkratki(SLL<Double> lista) throws IOException {
 		SLLNode<Double> d1 = lista.getFirst();
 		double min1 = d1.element;
@@ -99,17 +152,19 @@ public class MyServletDemo extends HttpServlet {
 			DecimalFormat df = new DecimalFormat("#.##");
 			String formatted1 = df.format(min1);
 			myWriter.write(formatted1 + " meters away");
+			System.out.println("MIN1: " + formatted1);
 
 			myWriter.write("\n");
 
 			String formatted2 = df.format(min2);
 			myWriter.write(formatted2 + " meters away");
+			System.out.println("MIN2: " + formatted2);
 
 			myWriter.write("\n");
 
 			String formatted3 = df.format(min3);
 			myWriter.write(formatted3 + " meters away");
-
+			System.out.println("MIN3: " + formatted3);
 			myWriter.close();
 
 		} catch (IOException e) {
@@ -119,33 +174,7 @@ public class MyServletDemo extends HttpServlet {
 	}
 }
 
-class CreateHtml {
-	public void createHtml() throws IOException {
-		File f = new File("distance.html");
-		BufferedWriter bw = new BufferedWriter(new FileWriter(f));
-
-		File file = new File("rastojanija.txt");
-		BufferedReader br = new BufferedReader(new FileReader(file));
-		String line = br.readLine();
-
-		bw.write("<html><body style=\"background: linear-gradient(-45deg, #545353, #7e7a7a, #a5a7ae, #d4cfcf);"
-				+ "width:100%; height: 100%; background-size: cover; margin-left: auto;  margin-right: auto;"
-				+ "font-family: 'Trebuchet MS', sans-serif\">"
-				+ "<a href=\"pochetna.html\"><img src=\"slikiApp/levo_strelka.png\" style=\"float:left; height:15%; width:10%; cursor:pointer\"></a><img style=\"display:block; margin-left:auto; margin-right:auto; width:25%; height:25%\" id=\"logoDistance\" src=\"slikiApp/logo_shadow.png\"><div id=\"distanceContainer\" style=\"border:1px solid black; width:70%;"
-				+ "margin:auto; height:65%; margin-top:10px\" id=\"distanceContainer\">\r\n");
-
-		while (line != null) {
-			bw.write("<p style=\"font-size:3vw; margin-left:10px\">" + line + "</p><div style=\"margin-top: -95px; width:100%; margin-left:475px\"><img onclick=\"addToVisited()\" style=\"height:16%; width:5%; cursor:pointer\" src=\"slikiApp/pin_shadow.png\"><img onclick=\"addToFaves()\" style=\"height:16%; width:7%; cursor:pointer\" src=\"slikiApp/favourites.png\"></div>");
-			bw.write("<br>");
-			line = br.readLine();
-		}
-		br.close();
-		bw.write("</div></body></html>");
-
-		bw.close();
-	}
-}
-
+//Помошна податочна структура
 class SLLNode<E> {
 	protected E element;
 	protected SLLNode<E> succ;
@@ -165,7 +194,6 @@ class SLL<E> {
 	private SLLNode<E> first;
 
 	public SLL() {
-		// Construct an empty SLL
 		this.first = null;
 	}
 
