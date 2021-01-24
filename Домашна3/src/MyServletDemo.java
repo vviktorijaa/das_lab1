@@ -6,12 +6,45 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.text.DecimalFormat;
 
-/*
- * Креирање html фајл кој се прикажува при повик на Servlet - кликање на копче
- * Search ги прикажува растојанијата до најблиските ресторани
- */
+public class MyServletDemo extends HttpServlet {
+	
+	GlavnaFunkcija g=new GlavnaFunkcija();
+
+	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/html");
+		//PrintWriter out=response.getWriter();
+		
+		String value = (String) request.getParameter("pole1");
+		String [] razdeli=value.split("\\W+");
+		for(int i=0; i<value.length(); i++) {
+			if(Character.isLetter((value.charAt(i)))) {
+				String nextHTML = "/home.html?t=\" + System.currentTimeMillis()"; //home
+				RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(nextHTML);
+				dispatcher.forward(request, response);
+			}
+		}
+		if (value.isEmpty() || razdeli.length==1) {
+			String nextHTML = "/home.html?t=\" + System.currentTimeMillis()"; //home
+			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(nextHTML);
+			dispatcher.forward(request, response);
+		}
+		else {
+			g.mainFunc(value);
+
+			CreateHtml html = new CreateHtml();
+			html.createHtml();
+
+			String nextHTML = "/distance.html?t=\" + System.currentTimeMillis()";
+			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(nextHTML);
+			dispatcher.forward(request, response);
+		}
+		// response.sendRedirect("http://.google.com");
+	}
+}
+
 class CreateHtml {
 	public void createHtml() throws IOException {
 		File f = new File("distance.html");
@@ -42,8 +75,11 @@ class CreateHtml {
 	}
 }
 
-public class MyServletDemo extends HttpServlet {
-
+class GlavnaFunkcija{
+	
+	PretvoriVoMetri pretvoriVoMetri=new PretvoriVoMetri();
+	VratiNajbliskiRestorani najbliski=new VratiNajbliskiRestorani();
+	
 	public void mainFunc(String v) throws IOException {
 		File file = new File("database.txt");
 		BufferedReader br = new BufferedReader(new FileReader(file));
@@ -64,7 +100,7 @@ public class MyServletDemo extends HttpServlet {
 			if (line.contains("lon")) {
 				currLon = Double.parseDouble(line.substring(4));
 			} else if (currLat != 0 && currLon != 0) {
-				double distance = measure(lat, lon, currLat, currLon);
+				double distance = pretvoriVoMetri.measure(lat, lon, currLat, currLon);
 				lista.insertLast(distance);
 
 				currLat = 0;
@@ -74,45 +110,13 @@ public class MyServletDemo extends HttpServlet {
 		}
 		br.close();
 
-		vratiNajkratki(lista);
+		najbliski.vratiNajbliski(lista);
 	}
+}
 
-	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		response.setContentType("text/html");
-		
-		String value = (String) request.getParameter("pole1");
-		String [] razdeli=value.split("\\W+");
-		for(int i=0; i<value.length(); i++) {
-			if(Character.isLetter((value.charAt(i)))) {
-				String nextHTML = "/home.html?t=\" + System.currentTimeMillis()"; //home
-				RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(nextHTML);
-				dispatcher.forward(request, response);
-			}
-		}
-		if (value.isEmpty() || razdeli.length==1) {
-			String nextHTML = "/home.html?t=\" + System.currentTimeMillis()"; //home
-			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(nextHTML);
-			dispatcher.forward(request, response);
-		}
-		else {
-			mainFunc(value);
-
-			CreateHtml html = new CreateHtml();
-			html.createHtml();
-
-			String nextHTML = "/distance.html?t=\" + System.currentTimeMillis()";
-			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(nextHTML);
-			dispatcher.forward(request, response);
-		}
-		// response.sendRedirect("http://.google.com");F
-	}
-
-	/*
-	 * Пресметува растојание помеѓу координатите внесени од корисникот и
-	 * координатите на сите ресторани од базата
-	 */
-	public static double measure(double lat1, double lon1, double lat2, double lon2) {
-		int R = 6371; // Радиус на планетата Земја во километри
+class PretvoriVoMetri{
+	public double measure(double lat1, double lon1, double lat2, double lon2) {
+		int R = 6371; 
 		double dLat = lat2 * Math.PI / 180 - lat1 * Math.PI / 180;
 		double dLon = lon2 * Math.PI / 180 - lon1 * Math.PI / 180;
 		double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(lat1 * Math.PI / 180)
@@ -120,14 +124,12 @@ public class MyServletDemo extends HttpServlet {
 		double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 		double d = R * c;
 
-		return d * 1000; // метри
+		return d * 1000;
 	}
+}
 
-	/*
-	 * Ги враќа трите најкратки растојанија од внесените координати до 3те најблиски
-	 * ресторани и растојанијата (во метри) ги запишува во txt фајл
-	 */
-	public void vratiNajkratki(SLL<Double> lista) throws IOException {
+class VratiNajbliskiRestorani{
+	public void vratiNajbliski(SLL<Double> lista) {
 		SLLNode<Double> d1 = lista.getFirst();
 		double min1 = d1.element;
 		double min2 = d1.element;
@@ -174,7 +176,6 @@ public class MyServletDemo extends HttpServlet {
 	}
 }
 
-//Помошна податочна структура
 class SLLNode<E> {
 	protected E element;
 	protected SLLNode<E> succ;
