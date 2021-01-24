@@ -10,7 +10,7 @@ import java.io.PrintWriter;
 import java.text.DecimalFormat;
 
 public class MyServletDemo extends HttpServlet {
-	
+
 	GlavnaFunkcija g=new GlavnaFunkcija();
 
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -21,13 +21,13 @@ public class MyServletDemo extends HttpServlet {
 		String [] razdeli=value.split("\\W+");
 		for(int i=0; i<value.length(); i++) {
 			if(Character.isLetter((value.charAt(i)))) {
-				String nextHTML = "/home.html?t=\" + System.currentTimeMillis()"; //home
+				String nextHTML = "/home.html?t=\"";
 				RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(nextHTML);
 				dispatcher.forward(request, response);
 			}
 		}
 		if (value.isEmpty() || razdeli.length==1) {
-			String nextHTML = "/home.html?t=\" + System.currentTimeMillis()"; //home
+			String nextHTML = "/home.html?t=\"";
 			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(nextHTML);
 			dispatcher.forward(request, response);
 		}
@@ -36,12 +36,13 @@ public class MyServletDemo extends HttpServlet {
 
 			CreateHtml html = new CreateHtml();
 			html.createHtml();
-
-			String nextHTML = "/distance.html?t=\" + System.currentTimeMillis()";
-			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(nextHTML);
+			
+			String distanceHTML = "/distance.html?t=\" + System.currentTimeMillis()";
+			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(distanceHTML);
 			dispatcher.forward(request, response);
+		
+		//response.sendRedirect("http://.google.com");
 		}
-		// response.sendRedirect("http://.google.com");
 	}
 }
 
@@ -83,7 +84,7 @@ class GlavnaFunkcija{
 	public void mainFunc(String v) throws IOException {
 		File file = new File("database.txt");
 		BufferedReader br = new BufferedReader(new FileReader(file));
-		SLL<Double> lista = new SLL();
+		SLL<Double> lista = new SLL<>();
 
 		String[] pomNiza = v.split(" ");
 
