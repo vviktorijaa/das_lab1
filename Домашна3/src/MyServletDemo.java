@@ -12,10 +12,11 @@ import java.text.DecimalFormat;
 public class MyServletDemo extends HttpServlet {
 
 	GlavnaFunkcija g=new GlavnaFunkcija();
+	DecimalFormat df = new DecimalFormat("#.##");
 
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
-		//PrintWriter out=response.getWriter();
+		PrintWriter out=response.getWriter();
 		
 		String value = (String) request.getParameter("pole1");
 		String [] razdeli=value.split("\\W+");
@@ -32,56 +33,22 @@ public class MyServletDemo extends HttpServlet {
 			dispatcher.forward(request, response);
 		}
 		else {
-			g.mainFunc(value);
-
-			CreateHtml html = new CreateHtml();
-			html.createHtml();
-			
-			String distanceHTML = "/distance.html?t=\" + System.currentTimeMillis()";
-			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(distanceHTML);
-			dispatcher.forward(request, response);
-		
-		//response.sendRedirect("http://.google.com");
+			out.print("<html><body style=\"height: 97%;"
+					+ "background-image: url(slikiApp/pozadina_mapa_burred.jpg); background-size: cover; background-repeat: no-repeat;"
+					+ "font-family: 'Trebuchet MS', sans-serif\">"
+					+ "<a href=\"home.html\"><img src=\"slikiApp/levo_strelka.png\" style=\"float:left; height:15%; width:10%; cursor:pointer\"></a><img style=\"display:block; margin-left:auto; margin-right:auto; width: 30%\" id=\"logoDistance\" src=\"slikiApp/logo_shadow.png\"><div id=\"distanceContainer\""
+					+ "style=\"margin:auto; margin:auto; height:65%; width:50%; padding:10px\" id=\"distanceContainer\">\r\n"+"<p style=\" text-shadow: 2px 2px #D5D5D5; font-size: 3vw;  text-align: justify\"><b>"+df.format(g.mainFunc(value))+" meters away from the nearest restaurant in your area.");
 		}
 	}
 }
 
-class CreateHtml {
-	public void createHtml() throws IOException {
-		File f = new File("distance.html");
-
-		BufferedWriter bw = new BufferedWriter(new FileWriter(f));
-
-		File file = new File("rastojanija.txt");
-		BufferedReader br = new BufferedReader(new FileReader(file));
-		String line = br.readLine();
-
-		bw.write("<html><body style=\"height: 97%;"
-				+ "background-image: url(slikiApp/pozadina_mapa_burred.jpg); background-size: cover; background-repeat: no-repeat;"
-				+ "font-family: 'Trebuchet MS', sans-serif\">"
-				+ "<a href=\"home.html\"><img src=\"slikiApp/levo_strelka.png\" style=\"float:left; height:15%; width:10%; cursor:pointer\"></a><img style=\"display:block; margin-left:auto; margin-right:auto; width: 30%\" id=\"logoDistance\" src=\"slikiApp/logo_shadow.png\"><div id=\"distanceContainer\""
-				+ "style=\"margin:auto; margin:auto; height:65%; width:50%; padding:10px\" id=\"distanceContainer\">\r\n");
-		 
-		while (line != null) {
-			//System.out.println("LINE" + line);
-			bw.write("<p style=\"font-size:3vw; margin-left:10px\">" + line
-					+ "</p><div style=\"margin-top: -95px; margin-left:475px\"><img onclick=\"addToVisited()\" style=\"height:16%; width:26%; cursor:pointer\" src=\"slikiApp/pin_shadow.png\"><img onclick=\"addToFaves()\" style=\"height:16%; width:37%; cursor:pointer\" src=\"slikiApp/favourites.png\"></div>");
-			bw.write("<br>");
-			line = br.readLine();
-		}
-		br.close();
-		bw.write("</div></body></html>");
-
-		bw.close();
-	}
-}
 
 class GlavnaFunkcija{
 	
 	PretvoriVoMetri pretvoriVoMetri=new PretvoriVoMetri();
 	VratiNajbliskiRestorani najbliski=new VratiNajbliskiRestorani();
 	
-	public void mainFunc(String v) throws IOException {
+	public double mainFunc(String v) throws IOException {
 		File file = new File("database.txt");
 		BufferedReader br = new BufferedReader(new FileReader(file));
 		SLL<Double> lista = new SLL<>();
@@ -111,7 +78,7 @@ class GlavnaFunkcija{
 		}
 		br.close();
 
-		najbliski.vratiNajbliski(lista);
+		return najbliski.vratiNajblizok1(lista);
 	}
 }
 
@@ -130,50 +97,24 @@ class PretvoriVoMetri{
 }
 
 class VratiNajbliskiRestorani{
-	public void vratiNajbliski(SLL<Double> lista) {
+	public double vratiNajblizok1(SLL<Double> lista) {
 		SLLNode<Double> d1 = lista.getFirst();
 		double min1 = d1.element;
-		double min2 = d1.element;
-		double min3 = d1.element;
 
 		d1 = d1.succ;
 
 		while (d1 != null) {
 			if (d1.element.compareTo(min1) < 0) {
 				min1 = d1.element;
-			} else if (d1.element.compareTo(min2) < 0) {
-				min2 = d1.element;
-			} else if (d1.element.compareTo(min3) < 0) {
-				min3 = d1.element;
 			}
 			d1 = d1.succ;
 		}
 
-		try {
-			FileWriter myWriter = new FileWriter("rastojanija.txt");
+		//DecimalFormat df = new DecimalFormat("#.##");
+		//String formatted1 = df.format(min1);
+		//System.out.println("MIN1: " + formatted1);
 
-			DecimalFormat df = new DecimalFormat("#.##");
-			String formatted1 = df.format(min1);
-			myWriter.write(formatted1 + " meters away");
-			System.out.println("MIN1: " + formatted1);
-
-			myWriter.write("\n");
-
-			String formatted2 = df.format(min2);
-			myWriter.write(formatted2 + " meters away");
-			System.out.println("MIN2: " + formatted2);
-
-			myWriter.write("\n");
-
-			String formatted3 = df.format(min3);
-			myWriter.write(formatted3 + " meters away");
-			System.out.println("MIN3: " + formatted3);
-			myWriter.close();
-
-		} catch (IOException e) {
-			System.out.println("An error occurred.");
-			e.printStackTrace();
-		}
+		return min1;
 	}
 }
 
